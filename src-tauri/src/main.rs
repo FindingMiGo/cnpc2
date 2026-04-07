@@ -1067,6 +1067,7 @@ async fn save_file(path: &str, data: Character) -> Result<(), String> {
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     tauri::Builder::default()
+        .plugin(tauri_plugin_dialog::init())
         .invoke_handler(
             tauri::generate_handler![
                 set_elona_dir,
@@ -1094,8 +1095,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             use tauri::async_runtime::block_on;
 
             // データベースのファイルパスを取得する
-            let resource_path = app.path_resolver()
-                .resolve_resource("resources/oo_data.db")
+            let resource_path = app.path()
+                .resolve("resources/oo_data.db", tauri::path::BaseDirectory::Resource)
                 .expect("failed to resolve resource");
             let database_dir_str = dunce::canonicalize(&resource_path)
                 .unwrap()

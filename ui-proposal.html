@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>cnpc2 UI Proposal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:        #F3F3F3;
+    --surface:   #FFFFFF;
+    --border:    #DADADA;
+    --border2:   #EBEBEB;
+    --text:      #1A1A1A;
+    --text-sub:  #666666;
+    --accent:    #0078D4;
+    --accent-h:  #106EBE;
+    --danger:    #C42B1C;
+    --label-w:   130px;
+    --row-h:     32px;
+  }
+
+  body {
+    font-family: 'Noto Sans JP', 'Yu Gothic UI', 'Meiryo UI', sans-serif;
+    font-size: 13px;
+    background: var(--bg);
+    color: var(--text);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* ── Toolbar ── */
+  .toolbar {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 12px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .toolbar-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-sub);
+    margin-right: 8px;
+  }
+  .toolbar-sep {
+    width: 1px;
+    height: 20px;
+    background: var(--border);
+    margin: 0 6px;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 12px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    border-radius: 4px;
+    font-size: 13px;
+    font-family: inherit;
+    cursor: pointer;
+    color: var(--text);
+    transition: background 0.1s, border-color 0.1s;
+    height: 28px;
+  }
+  .btn:hover { background: #F0F0F0; border-color: #BEBEBE; }
+  .btn:active { background: #E8E8E8; }
+  .btn-primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+  .btn-primary:hover { background: var(--accent-h); border-color: var(--accent-h); }
+  .btn svg { width: 14px; height: 14px; }
+
+  /* ── Tab bar ── */
+  .tabbar {
+    display: flex;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 12px;
+    flex-shrink: 0;
+  }
+  .tab {
+    padding: 8px 16px;
+    font-size: 13px;
+    cursor: pointer;
+    color: var(--text-sub);
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: color 0.1s;
+    user-select: none;
+  }
+  .tab:hover { color: var(--text); }
+  .tab.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 500; }
+
+  /* ── Main content ── */
+  .content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+  }
+
+  /* ── Section ── */
+  .section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+  .section-header {
+    padding: 8px 14px;
+    font-weight: 600;
+    font-size: 12px;
+    color: var(--text-sub);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    background: #FAFAFA;
+    border-bottom: 1px solid var(--border2);
+  }
+  .section-body {
+    padding: 12px 14px;
+  }
+
+  /* ── Form grid ── */
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 8px 24px;
+  }
+  .form-grid-2 { grid-template-columns: repeat(2, 1fr); }
+  .form-grid-3 { grid-template-columns: repeat(3, 1fr); }
+
+  .field {
+    display: flex;
+    align-items: center;
+    min-height: var(--row-h);
+    gap: 8px;
+  }
+  .field-label {
+    flex-shrink: 0;
+    width: var(--label-w);
+    color: var(--text-sub);
+    font-size: 12px;
+  }
+  .field-label.wide { width: 180px; }
+  .field-input {
+    flex: 1;
+  }
+
+  input[type="text"],
+  input[type="number"],
+  select,
+  textarea {
+    width: 100%;
+    height: 28px;
+    padding: 0 8px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-size: 13px;
+    font-family: inherit;
+    color: var(--text);
+    background: var(--surface);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  input[type="text"]:focus,
+  input[type="number"]:focus,
+  select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(0,120,212,0.15);
+  }
+  input[type="number"] { width: 80px; }
+  select { padding-right: 4px; }
+  textarea {
+    height: auto;
+    padding: 6px 8px;
+    resize: vertical;
+  }
+
+  input[type="checkbox"] {
+    width: 16px; height: 16px;
+    accent-color: var(--accent);
+    cursor: pointer;
+  }
+
+  /* ── Tag list (filter, bit_on) ── */
+  .tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 8px 0;
+  }
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    font-size: 12px;
+    background: #F5F5F5;
+    cursor: pointer;
+    transition: background 0.1s, border-color 0.1s;
+    user-select: none;
+  }
+  .tag:hover { background: #E8E8E8; }
+  .tag.selected {
+    background: rgba(0,120,212,0.08);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* ── Inline list (resist, skills) ── */
+  .item-list { display: flex; flex-direction: column; gap: 4px; }
+  .item-list-controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 6px;
+  }
+  .item-list-controls select { width: auto; }
+  .item-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 8px;
+    background: #FAFAFA;
+    border: 1px solid var(--border2);
+    border-radius: 4px;
+    font-size: 12px;
+  }
+  .item-row-label { flex: 1; }
+  .item-row-value { color: var(--text-sub); font-size: 12px; }
+  .btn-icon {
+    width: 20px; height: 20px;
+    display: inline-flex; align-items: center; justify-content: center;
+    border: none; background: none; cursor: pointer;
+    border-radius: 3px; color: var(--text-sub);
+    padding: 0;
+  }
+  .btn-icon:hover { background: #EEE; color: var(--danger); }
+
+  /* ── AI actions grid ── */
+  .ai-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+  }
+  .ai-grid select { width: 100%; }
+  .ai-grid-label {
+    font-size: 11px;
+    color: var(--text-sub);
+    margin-bottom: 3px;
+  }
+
+  /* ── Scrollbar ── */
+  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #CACACA; border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: #ABABAB; }
+</style>
+</head>
+<body>
+
+<!-- Toolbar -->
+<div class="toolbar">
+  <span class="toolbar-title">Custom NPC Editor ver.2</span>
+  <div class="toolbar-sep"></div>
+  <button class="btn">
+    <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zM0 8a8 8 0 1116 0A8 8 0 010 8z"/><path d="M7.5 4a.5.5 0 01.5.5v3.793l2.146 2.147a.5.5 0 01-.708.707L7.5 9.207V4.5a.5.5 0 01.5-.5h-.5z"/></svg>
+    Config
+  </button>
+  <button class="btn">
+    <svg viewBox="0 0 16 16" fill="currentColor"><path d="M.5 9.9a.5.5 0 01.5.5v2.5a1 1 0 001 1h12a1 1 0 001-1v-2.5a.5.5 0 011 0v2.5a2 2 0 01-2 2H2a2 2 0 01-2-2v-2.5a.5.5 0 01.5-.5z"/><path d="M7.646 1.146a.5.5 0 01.708 0l3 3a.5.5 0 01-.708.708L8.5 2.707V11.5a.5.5 0 01-1 0V2.707L5.354 4.854a.5.5 0 11-.708-.708l3-3z"/></svg>
+    Load
+  </button>
+  <button class="btn btn-primary">
+    <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 1a1 1 0 00-1 1v12a1 1 0 001 1h12a1 1 0 001-1V4.5L11.5 1H2zm9.5 0v3h3L11.5 1z"/></svg>
+    Save
+  </button>
+</div>
+
+<!-- Tab bar -->
+<div class="tabbar">
+  <div class="tab active">Spec</div>
+  <div class="tab">AI</div>
+  <div class="tab">Bit / 耐性</div>
+  <div class="tab">カスタム種族</div>
+  <div class="tab">カスタム職業</div>
+  <div class="tab">初期装備</div>
+  <div class="tab">テキスト</div>
+</div>
+
+<!-- Content: Spec tab -->
+<div class="content">
+
+  <!-- 基本情報 -->
+  <div class="section">
+    <div class="section-header">基本情報</div>
+    <div class="section-body">
+      <div class="form-grid">
+        <div class="field">
+          <span class="field-label">作者名</span>
+          <div class="field-input"><input type="text" placeholder="作者名を入力"></div>
+        </div>
+        <div class="field">
+          <span class="field-label">英語名 (ID)</span>
+          <div class="field-input"><input type="text" placeholder="英語名を入力"></div>
+        </div>
+        <div class="field">
+          <span class="field-label">日本語名</span>
+          <div class="field-input"><input type="text" placeholder="日本語名を入力"></div>
+        </div>
+        <div class="field">
+          <span class="field-label">種族</span>
+          <div class="field-input">
+            <select>
+              <option>エルフ</option>
+              <option>人間</option>
+              <option>ドワーフ</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <span class="field-label">職業</span>
+          <div class="field-input">
+            <select>
+              <option>戦士</option>
+              <option>魔法使い</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <span class="field-label">性別</span>
+          <div class="field-input">
+            <select>
+              <option value="-1">ランダム</option>
+              <option value="0">男</option>
+              <option value="1">女</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 生成設定 -->
+  <div class="section">
+    <div class="section-header">生成設定</div>
+    <div class="section-body">
+      <div class="form-grid">
+        <div class="field">
+          <span class="field-label">レベル</span>
+          <div class="field-input"><input type="number" min="1" max="2000" value="1"></div>
+        </div>
+        <div class="field">
+          <span class="field-label">関係</span>
+          <div class="field-input">
+            <select>
+              <option value="-3">敵対</option>
+              <option value="-2">敵対一歩寸前</option>
+              <option value="-1" selected>無関心</option>
+              <option value="0">中立</option>
+              <option value="10">友好</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <span class="field-label">生成品質</span>
+          <div class="field-input">
+            <select>
+              <option value="0">ランダム</option>
+              <option value="1">粗悪</option>
+              <option value="2">良質</option>
+              <option value="3">高品質</option>
+              <option value="4">奇跡</option>
+              <option value="5">神器</option>
+              <option value="6">特別</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <span class="field-label">生成頻度</span>
+          <div class="field-input"><input type="number" min="1" max="500" value="1"></div>
+        </div>
+        <div class="field">
+          <span class="field-label">生成条件</span>
+          <div class="field-input">
+            <select>
+              <option value="0">通常</option>
+              <option value="2">通常(ユニーク)</option>
+              <option value="3">特殊(ユニーク)</option>
+              <option value="5">街</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <span class="field-label">ランダム名</span>
+          <div class="field-input"><input type="checkbox"></div>
+        </div>
+        <div class="field">
+          <span class="field-label">飲食しない</span>
+          <div class="field-input"><input type="checkbox"></div>
+        </div>
+        <div class="field">
+          <span class="field-label">吟遊詩人等の役割</span>
+          <div class="field-input">
+            <select>
+              <option value="0">なし</option>
+              <option value="1">吟遊詩人</option>
+              <option value="2">清掃員</option>
+              <option value="3">娼婦</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- 属性 (タグ形式) -->
+      <div style="margin-top: 10px;">
+        <div class="field-label" style="margin-bottom: 6px; font-size: 12px; color: var(--text-sub);">属性 (複数選択可)</div>
+        <div class="tag-list">
+          <div class="tag selected">人</div>
+          <div class="tag">ドラゴン</div>
+          <div class="tag">アンデッド</div>
+          <div class="tag">スライム</div>
+          <div class="tag">炎</div>
+          <div class="tag">sf</div>
+          <div class="tag selected">イーク</div>
+          <div class="tag">ミノタウロス</div>
+          <div class="tag">野生</div>
+          <div class="tag">駒</div>
+          <div class="tag">傭兵</div>
+          <div class="tag">ごろつき</div>
+          <div class="tag">ネコ</div>
+          <div class="tag">エーテル</div>
+          <div class="tag">馬</div>
+          <div class="tag">カスタムNPC</div>
+          <div class="tag">自然生成なし</div>
+          <div class="tag">ダウンロード対象外</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 近接攻撃 / 外見 -->
+  <div class="section">
+    <div class="section-header">外見 / 攻撃属性</div>
+    <div class="section-body">
+      <div class="form-grid">
+        <div class="field">
+          <span class="field-label">チップ番号</span>
+          <div class="field-input"><input type="number" value="0"></div>
+        </div>
+        <div class="field">
+          <span class="field-label">カラー番号</span>
+          <div class="field-input"><input type="number" value="0"></div>
+        </div>
+        <div class="field">
+          <span class="field-label">透過率</span>
+          <div class="field-input"><input type="number" min="0" max="256" value="0"></div>
+        </div>
+        <div class="field">
+          <span class="field-label">影</span>
+          <div class="field-input"><input type="number" min="-1" max="150" value="0"></div>
+        </div>
+        <div class="field">
+          <span class="field-label">浮き具合</span>
+          <div class="field-input"><input type="number" min="16" max="32" value="16"></div>
+        </div>
+        <div class="field">
+          <span class="field-label">近接属性</span>
+          <div class="field-input">
+            <select>
+              <option>なし</option>
+              <option>火</option>
+              <option>冷気</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <span class="field-label">属性強度</span>
+          <div class="field-input"><input type="number" min="0" max="500" value="0"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 耐性 -->
+  <div class="section">
+    <div class="section-header">耐性</div>
+    <div class="section-body">
+      <div class="item-list-controls">
+        <select style="width:140px;"><option>火</option><option>冷気</option><option>雷</option></select>
+        <select style="width:120px;"><option>弱点(-)</option><option>通常(0)</option><option>耐性(50)</option><option>強耐性(100)</option></select>
+        <button class="btn">追加</button>
+      </div>
+      <div class="item-list">
+        <div class="item-row">
+          <span class="item-row-label">火</span>
+          <span class="item-row-value">耐性(50)</span>
+          <button class="btn-icon">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><path d="M2.22 2.22a.75.75 0 011.06 0L6 4.94l2.72-2.72a.75.75 0 111.06 1.06L7.06 6l2.72 2.72a.75.75 0 11-1.06 1.06L6 7.06 3.28 9.78a.75.75 0 01-1.06-1.06L4.94 6 2.22 3.28a.75.75 0 010-1.06z"/></svg>
+          </button>
+        </div>
+        <div class="item-row">
+          <span class="item-row-label">冷気</span>
+          <span class="item-row-value">弱点(-)</span>
+          <button class="btn-icon">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><path d="M2.22 2.22a.75.75 0 011.06 0L6 4.94l2.72-2.72a.75.75 0 111.06 1.06L7.06 6l2.72 2.72a.75.75 0 11-1.06 1.06L6 7.06 3.28 9.78a.75.75 0 01-1.06-1.06L4.94 6 2.22 3.28a.75.75 0 010-1.06z"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI tab preview -->
+  <div class="section" style="display:none" id="ai-tab">
+    <div class="section-header">AI設定</div>
+    <div class="section-body">
+      <div class="form-grid form-grid-2" style="margin-bottom: 16px;">
+        <div class="field">
+          <span class="field-label">待機時行動</span>
+          <div class="field-input">
+            <select><option>放浪</option><option>鈍感</option><option>停止</option><option>随行</option></select>
+          </div>
+        </div>
+        <div class="field">
+          <span class="field-label">移動確率</span>
+          <div class="field-input"><input type="number" min="0" max="100" value="50"></div>
+        </div>
+        <div class="field">
+          <span class="field-label">適正距離</span>
+          <div class="field-input"><input type="number" min="1" max="6" value="1"></div>
+        </div>
+        <div class="field">
+          <span class="field-label">瀕死時行動</span>
+          <div class="field-input"><select><option>なし</option><option>回復</option></select></div>
+        </div>
+      </div>
+
+      <div style="margin-bottom: 8px; font-size: 12px; color: var(--text-sub); font-weight: 600;">基本行動 (優先度順)</div>
+      <div class="ai-grid">
+        <div>
+          <div class="ai-grid-label">行動1</div>
+          <select><option>なし</option><option>通常攻撃</option></select>
+        </div>
+        <div>
+          <div class="ai-grid-label">行動2</div>
+          <select><option>なし</option><option>魔法</option></select>
+        </div>
+        <div>
+          <div class="ai-grid-label">行動3</div>
+          <select><option>なし</option></select>
+        </div>
+        <div>
+          <div class="ai-grid-label">行動4</div>
+          <select><option>なし</option></select>
+        </div>
+        <div>
+          <div class="ai-grid-label">行動5</div>
+          <select><option>なし</option></select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+    });
+  });
+  document.querySelectorAll('.tag').forEach(tag => {
+    tag.addEventListener('click', () => tag.classList.toggle('selected'));
+  });
+</script>
+</body>
+</html>

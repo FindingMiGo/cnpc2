@@ -1,52 +1,14 @@
 {
+  "productName": "cnpc2",
+  "version": "1.2.0",
+  "identifier": "cnpc2.dev",
   "build": {
     "beforeDevCommand": "yarn dev",
     "beforeBuildCommand": "yarn build",
-    "devPath": "http://localhost:1420",
-    "distDir": "../dist",
-    "withGlobalTauri": false
+    "devUrl": "http://localhost:1420",
+    "frontendDist": "../dist"
   },
-  "package": {
-    "productName": "cnpc2",
-    "version": "1.2.0"
-  },
-  "tauri": {
-    "allowlist": {
-      "all": false,
-      "shell": {
-        "all": false,
-        "open": true
-      },
-      "dialog": {
-        "all": true
-      },
-      "fs": {
-        "scope": ["$RESOURCE/*"]
-      }
-    },
-    "bundle": {
-      "active": true,
-      "targets": "all",
-      "identifier": "cnpc2.dev",
-      "icon": [
-        "icons/32x32.png",
-        "icons/128x128.png",
-        "icons/128x128@2x.png",
-        "icons/icon.icns",
-        "icons/icon.ico"
-      ],
-      "windows": {
-        "nsis": {
-          "languages": ["japanese"]
-        },
-        "wix": {
-          "language": "ja-JP"
-        }
-      },
-      "resources": [
-        "resources/*"
-      ]
-    },
+  "app": {
     "security": {
       "csp": null
     },
@@ -54,10 +16,30 @@
       {
         "fullscreen": false,
         "resizable": true,
-        "title": "Custom NPC Editor ver.2",
+        "title": "Custom NPC Editor ver.2 mod",
         "width": 800,
         "height": 600
       }
     ]
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "windows": {
+      "nsis": {
+        "languages": ["japanese"]
+      },
+      "wix": {
+        "language": "ja-JP"
+      }
+    },
+    "resources": ["resources/*"]
   }
 }
