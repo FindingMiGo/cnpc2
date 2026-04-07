@@ -1,6 +1,6 @@
-# Custom NPC Editor 2
+# Custom NPC Editor 2 Mod
 
-Custom NPC Editor for elona_omake_overhaul.
+Custom NPC Editor Mod for elona_omake_overhaul.
 
 Forked from [Seacolor/cnpc2](https://github.com/Seacolor/cnpc2).
 
