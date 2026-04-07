@@ -2,9 +2,7 @@
 
 Custom NPC Editor for elona_omake_overhaul.
 
-## Installation
-
-Download packaged binaries from the [releases page](https://github.com/Seacolor/cnpc2/releases/latest).
+Forked from [Seacolor/cnpc2](https://github.com/Seacolor/cnpc2).
 
 ## Building
 
