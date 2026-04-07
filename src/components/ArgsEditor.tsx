@@ -17,15 +17,9 @@ const ArgsEditor: FC<Props> = ({
     const [values, setValues] = useState<string[]>(["", "", "", ""]);
   
     const onArgChange = (index: number, value: string, size: number) => {
-      values[index] = value;
-      setValues([
-          ...values,
-      ])
-      const v = [] as string[];
-      for (let i:number = 0; i < size; i++) {
-        v.push(values[i]);
-      }
-      onArgsChange && onArgsChange(v);
+      const next = values.map((v, i) => i === index ? value : v);
+      setValues(next);
+      onArgsChange && onArgsChange(next.slice(0, size));
     }
 
     if (textCase && textCase.args_type != "none") {

@@ -625,7 +625,7 @@ pub(crate) fn parse(text: &str) -> Result<Character, String> {
         .collect::<Vec<_>>();
     let mut resist: Vec<UserResist> = Vec::new();
     let mut i = 0;
-    while i < _resist.len() {
+    while i + 1 < _resist.len() {
         resist.push(
             UserResist::new(
                 _resist[i],

@@ -934,7 +934,7 @@ async fn save_file(path: &str, data: Character) -> Result<(), String> {
         user_class.push(data.user_class.skill.iter().map(|s| format!("{}", s.id * 10000 + s.value)).collect::<Vec<_>>().join("|"));
         user_class.push(data.user_class.description.to_string());
         user_class.push(data.user_class.desc_e.to_string());
-        text.push(format!("userRace.\t\"{}\"", user_class.join(",")));
+        text.push(format!("userClass.\t\"{}\"", user_class.join(",")));
     }
     if data.init_equip_enabled {
         let mut init_equip: Vec<String> = Vec::new();

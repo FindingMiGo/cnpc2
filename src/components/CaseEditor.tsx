@@ -16,17 +16,15 @@ const CaseEditor: FC<Props> = ({
     onValuesChange,
   }) => {
     const onValueChange = (index: number, value: string) => {
-      let values = [
-        ...caseValues
-      ]
-      values[index].value = value;
+      const values = caseValues.map((v, i) =>
+        i === index ? { ...v, value } : v
+      );
       onValuesChange && onValuesChange(values);
     }
     const onNotSwitch = (index: number, value: boolean) => {
-      let values = [
-        ...caseValues
-      ]
-      values[index].not = value;
+      const values = caseValues.map((v, i) =>
+        i === index ? { ...v, not: value } : v
+      );
       onValuesChange && onValuesChange(values);
     }
 
@@ -52,9 +50,9 @@ const CaseEditor: FC<Props> = ({
           return (
               <select key={index} onChange={(e) => {
                 onNotSwitch(index, Boolean(e.target.value))
-              }} defaultValue={caseValue.not ? 1 : 0}>
-                <option value={0}>{label}</option>
-                <option value={1}>{label + "でなく"}</option>
+              }} defaultValue={caseValue.not ? "1" : "0"}>
+                <option value="0">{label}</option>
+                <option value="1">{label + "でなく"}</option>
               </select>
           )
         })}

@@ -605,13 +605,21 @@ function App() {
                 if (!t) return;
                 const b = t.bodies.find((b) => valuesEqual(b.case_values, caseValues) && arrayEqual(b.case_args, caseArgs));
                 if (!b) return;
-                b.jp.splice(i, 1);
                 setCharacter(
                   {
                     ...character,
-                    txt: [
-                      ...character?.txt,
-                    ],
+                    txt: character.txt.map((t2) =>
+                      t2.tag === id.tag && t2.value === value
+                        ? {
+                            ...t2,
+                            bodies: t2.bodies.map((b2) =>
+                              valuesEqual(b2.case_values, caseValues) && arrayEqual(b2.case_args, caseArgs)
+                                ? { ...b2, jp: b2.jp.filter((_, j) => j !== i) }
+                                : b2
+                            ),
+                          }
+                        : t2
+                    ),
                   }
                 );
               }}>
@@ -2324,7 +2332,7 @@ function App() {
                           onChange={(e) => setUserClassSkillValue(+e.target.value)}
                         />
                         <button onClick={() => {
-                          if (character?.user_class.skill.some((s) => s.id === userRaceSkillId?.id)) return;
+                          if (character?.user_class.skill.some((s) => s.id === userClassSkillId?.id)) return;
                           setCharacter(
                             {
                               ...character,
